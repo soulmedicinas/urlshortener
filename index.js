@@ -1,7 +1,9 @@
-require('dotenv').config();
+require('dotenv').config({path: './sample.env' });
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const mongoose = require('mongoose')
+
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
