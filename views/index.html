@@ -23,6 +23,14 @@
             <input type="submit" value="POST URL" />
           </fieldset>
         </form>
+        <form action="api/shorturl" method="GET"> 
+          <fieldset>
+            <legend>Retrieve a shortened URL</legend>
+            <label for="short_url_input">Code:</label>
+            <input id="short_url_input" type="text" name="short_url" placeholder="Enter short URL code" />
+            <button type="submit">GET URL</button>
+          </fieldset>
+        </form>
       </section>
     </main>
     <footer>
