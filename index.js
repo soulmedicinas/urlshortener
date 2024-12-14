@@ -35,7 +35,6 @@ app.listen(port, function() {
 app.post("/api/shorturl", async function( req, res){
   const url = req.body.url;
   const urlCode = nanoid();
-  console.log(urlCode);
 
   if (!okUrl.isWebUri(url)){
     res.status(200).json({error:"invalid url"});
@@ -45,6 +44,7 @@ app.post("/api/shorturl", async function( req, res){
       if (findOne){
         res.json({ original_url: findOne.original_url,
                    short_url:findOne.short_url});
+                   console.log(findOne.short_url);
       }else{
         findOne = new URL({original_url: url, short_url:urlCode});
         await findOne.save();
@@ -58,7 +58,7 @@ app.post("/api/shorturl", async function( req, res){
 
 app.get( "/api/shorturl/:shorturl", async function( req, res){
   try{
-    const urlParms = await URL.findOne({ short_url: req.params.short_url});
+    const urlParms = await URL.findOne({ short_url: req.params.shorturl});
     if( urlParms){
       return res.redirect(urlParms.original_url);
     }else{
