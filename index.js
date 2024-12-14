@@ -5,7 +5,7 @@ const app = express();
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const {shortId} = require('napi-nanoid');
+const {nanoid} = require('napi-nanoid');
 const okUrl   = require("valid-url");
 // const mongoDbURI = "mongodb+srv://aahborgesnogueira:dBJZnb3UNbMqcMho@cluster0.6qowl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const mongoDbURI = process.env.MONGO_URI || 'mongodb+srv://aahborgesnogueira:dBJZnb3UNbMqcMho@cluster0.6qowl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
