@@ -10,8 +10,8 @@ const okUrl   = require("valid-url");
 // const mongoDbURI = "mongodb+srv://aahborgesnogueira:dBJZnb3UNbMqcMho@cluster0.6qowl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const mongoDbURI = process.env.MONGO_URI || 'mongodb+srv://aahborgesnogueira:dBJZnb3UNbMqcMho@cluster0.6qowl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const port = process.env.PORT || 3000;
-
-mongoose.connect(mongoDbURI);
+console.log( cors);
+console.log( mongoDbURI);
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({'extended': false}));
@@ -30,7 +30,7 @@ app.listen(port, function() {
 });
 
 mongoose.connect(mongoDbURI, { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS:5000 });
-
+mongoose.connection.on('connected', () => console.log('connected'));
 const Schema = mongoose.Schema;
 const urlSchema = new Schema({original_url:String, short_url:String});
 const URL = mongoose.model( "URL", urlSchema);
