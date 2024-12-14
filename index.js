@@ -2,9 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const { MongoClient } = require('mongodb');
-const client = new MongoClient(process.env.DB_URL);
-const db = client.db( "urlshortner");
+const { MongoClient, ObjectId } = require('mongodb');
+const mongoDbURI = "mongodb+srv://aahborgesnogueira:dBJZnb3UNbMqcMho@cluster0.6qowl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const client = "";
+conecDb();
+conecDb().catch(console.error);
+const db = client( "urlshortner");
 const urls = db.collection( "urls");
 const dns = require( "dns");
 const urlparser = require( "url");
@@ -13,11 +16,6 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-/*var bodyParser = require('body-parser');
-var urlHandler = require('./controllers/urlHandler.js');
-app.post('/api/shorturl/new', urlHandler.addUrl);
-app.get('/api/shorturl/:shurl', urlHandler.processShortUrl);
-app.use(bodyParser.urlencoded({'extended': false}));*/
 app.use('/public', express.static(`${process.cwd()}/public`));
 
 app.get('/', function(req, res) {
@@ -51,3 +49,14 @@ app.get( "api/shorturl/:short_url", async (req,res) =>{
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
+
+async function conecDb(){
+  const client = new MongoClient(mongoDbURI);
+         try {
+           await client.connect();
+       
+        } finally {
+            await console.log( "ok");
+        }
+    }; 
+        
