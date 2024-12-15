@@ -35,6 +35,8 @@ app.listen(port, function() {
 app.post("/api/shorturl", async function( req, res){
   const url = req.body.url;
   const urlCode = nanoid();
+  console.log( url);
+  console.log( urlCode);
 
   if (!okUrl.isWebUri(url)){
     res.status(200).json({error:"invalid url"});
