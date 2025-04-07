@@ -27,6 +27,10 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
+// Validate URL
+  if (!validUrl.isWebUri(url)) {
+    return res.json({ error: 'invalid url' });
+  }
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
