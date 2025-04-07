@@ -60,6 +60,12 @@ app.post('/api/shorturl', async (req, res) => {
       original_url: url,
       short_url: shortUrl
     });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json('Server error');
+  }
+});
     
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
