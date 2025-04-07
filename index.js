@@ -30,6 +30,7 @@ const Url = mongoose.model('Url', urlSchema);
 // POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
+  
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
