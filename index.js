@@ -25,6 +25,8 @@ const urlSchema = new mongoose.Schema({
   short_url: String
 });
 
+const Url = mongoose.model('Url', urlSchema);
+
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
