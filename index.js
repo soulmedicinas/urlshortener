@@ -46,7 +46,14 @@ app.post('/api/shorturl', async (req, res) => {
         short_url: existingUrl.short_url
       });
     }
-  
+    
+  // Create new short URL
+    const shortUrl = shortid.generate();
+    const newUrl = new Url({
+      original_url: url,
+      short_url: shortUrl
+    });
+    
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
