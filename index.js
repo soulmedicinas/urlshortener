@@ -30,8 +30,12 @@ const Url = mongoose.model('Url', urlSchema);
 // POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
+ 
+// Validate URL
+  if (!validUrl.isWebUri(url)) {
+    return res.json({ error: 'invalid url' });
+  }
   
-
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
