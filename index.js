@@ -53,6 +53,13 @@ app.post('/api/shorturl', async (req, res) => {
       original_url: url,
       short_url: shortUrl
     });
+
+    await newUrl.save();
+
+    res.json({
+      original_url: url,
+      short_url: shortUrl
+    });
     
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
