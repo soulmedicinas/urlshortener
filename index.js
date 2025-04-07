@@ -36,6 +36,10 @@ app.post('/api/shorturl', async (req, res) => {
     return res.json({ error: 'invalid url' });
   }
   
+  try {
+    // Check if URL already exists
+    let existingUrl = await Url.findOne({ original_url: url });
+  
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
