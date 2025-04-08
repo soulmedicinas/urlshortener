@@ -66,7 +66,23 @@ app.post('/api/shorturl', async (req, res) => {
     res.status(500).json('Server error');
   }
 });
+
+// GET endpoint to redirect short URL
+app.get('/api/shorturl/:short_url', async (req, res) => {
+  try {
+    const url = await Url.findOne({ short_url: req.params.short_url });
     
+    if (url) {
+      return res.redirect(url.original_url);
+    } else {
+      return res.status(404).json('No URL found');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json('Server error');
+  }
+});
+
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
