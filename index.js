@@ -31,9 +31,9 @@ app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
  
 // Validate URL
-  if (!validUrl.isWebUri(url)) {
+  if (!validUrl.isUri(url) || !url.startsWith('http')) {
     return res.json({ error: 'invalid url' });
-  }
+}
   
   try {
     // Check if URL already exists
