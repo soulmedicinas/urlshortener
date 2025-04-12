@@ -23,6 +23,25 @@
             <input type="submit" value="POST URL" />
           </fieldset>
         </form>
+<div id="result"></div>
+<script>
+  document.getElementById('urlForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const url = document.getElementById('url_input').value;
+    
+    const response = await fetch('/api/shorturl', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    
+    const data = await response.json();
+    document.getElementById('result').innerHTML = `
+      <p>Original URL: ${data.original_url}</p>
+      <p>Short URL: <a href="/api/shorturl/${data.short_url}">${data.short_url}</a></p>
+    `;
+  });
+</script>
       </section>
     </main>
     <footer>
