@@ -13,6 +13,7 @@ app.use(cors({
   origin: '*',
   methods: ['GET', 'POST']
 }));
+app.use(express.urlencoded({ extended: true })); 
 app.use(express.json());
 app.use('/public', express.static(`${process.cwd()}/public`));
 
