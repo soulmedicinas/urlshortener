@@ -30,6 +30,10 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
+// In GET /api/shorturl/:short_url
+const shortUrl = req.params.short_url.replace(/[^a-zA-Z0-9_-]/g, ''); // Remove special chars
+const url = await Url.findOne({ short_url: shortUrl });
+
 // POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
