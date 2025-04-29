@@ -81,11 +81,14 @@ app.get('/api/shorturl/:short_url', async (req, res) => {
     } else {
       return res.status(404).json('No URL found');
     }
+  
   } catch (err) {
-    console.error(err);
-    res.status(500).json('Server error');
-  }
-});
+    return res.json({ 
+      error: err.message === 'DNS lookup failed' 
+        ? 'invalid hostname' 
+        : 'server error' 
+    });
+  };
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
