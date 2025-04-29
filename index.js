@@ -38,6 +38,16 @@ app.post('/api/shorturl', async (req, res) => {
   if (!validUrl.isUri(url) || !url.startsWith('http')) {
     return res.json({ error: 'invalid url' });
 }
+
+try {
+    // DNS verification
+    const hostname = new URL(url).hostname;
+    await new Promise((resolve, reject) => {
+      dns.lookup(hostname, (err) => {
+        if (err) reject(new Error('DNS lookup failed'));
+        else resolve();
+      });
+    });
   
   try {
     // Check if URL already exists
