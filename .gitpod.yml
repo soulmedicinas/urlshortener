@@ -4,10 +4,11 @@ ports:
   - port: 3000
     onOpen: open-preview
     visibility: public
-
+    
 tasks:
   - init: npm install
-    command: npm run start
+  - command: node index.js
+      echo "MONGO_URI=mongodb://localhost:27017/urlshortener" > .env
 
 vscode:
   extensions:
