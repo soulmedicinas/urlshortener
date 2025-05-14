@@ -4,12 +4,11 @@ ports:
   - port: 3000
     onOpen: open-preview
     visibility: public
-    
-tasks:
-  - init: npm install
-  - command: node index.js
-      echo "MONGO_URI=mongodb://localhost:27017/urlshortener" > .env
 
-vscode:
-  extensions:
-    - https://github.com/freeCodeCamp/freecodecamp-dark-vscode-theme/releases/download/v1.0.0/freecodecamp-dark-vscode-theme-1.0.0.vsix
+tasks:
+  - init: |
+      npm install
+      sudo apt-get update
+      sudo service mongodb start
+      echo "MONGO_URI=mongodb://localhost:27017/urlshortener" > .env
+  - command: node index.js
