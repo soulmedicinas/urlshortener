@@ -23,6 +23,10 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/urlshortene
 .then(() => console.log('MongoDB connected successfully'))
 .catch(err => console.error('MongoDB connection error:', err.message));
 
+mongoose.connection.on('error', err => {
+  console.error('MongoDB runtime error:', err);
+});
+
 // URL Schema
 const urlSchema = new mongoose.Schema({
   original_url: String,
