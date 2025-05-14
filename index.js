@@ -35,48 +35,39 @@ const urlSchema = new mongoose.Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
-// POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
 
-  // Validate URL
-  if (!validUrl.isWebUri(url)) {
+  // Basic URL format check
+  if (!url || !/^https?:\/\/(www\.)?[a-z0-9-]+(\.[a-z]{2,}){1,3}(\/.*)?$/i.test(url)) {
     return res.json({ error: 'invalid url' });
   }
 
   try {
-    // DNS verification
+    // Skip DNS lookup for local testing (remove later)
     const hostname = new URL(url).hostname;
-    await new Promise((resolve, reject) => {
-      dns.lookup(hostname, (err) => {
-        if (err) reject(new Error('invalid url'));
-        else resolve();
-      });
-    });
-
-    let existingUrl = await Url.findOne({ original_url: url });
-    if (existingUrl) {
-      return res.json({
-        original_url: existingUrl.original_url,
-        short_url: existingUrl.short_url
+    if (!hostname.includes('localhost')) { // Skip DNS for local URLs
+      await new Promise((resolve, reject) => {
+        dns.lookup(hostname, (err) => {
+          if (err) reject(new Error('invalid url'));
+          else resolve();
+        });
       });
     }
 
-     // Create new entry
-     const shortUrl = shortid.generate();
-     const newUrl = new Url({
-       original_url: url,
-       short_url: shortUrl
-     }); 
+    // Existing URL check and save logic...
+    let existingUrl = await Url.findOne({ original_url: url });
+    if (existingUrl) return res.json(existingUrl);
 
+    const shortUrl = shortid.generate();
+    const newUrl = new Url({ original_url: url, short_url: shortUrl });
     await newUrl.save();
-    res.json({
-      original_url: url,
-      short_url: shortUrl
-    });
     
+    return res.json({ original_url: url, short_url: shortUrl });
+
   } catch (err) {
-    return res.json({ error: 'invalid url' }); // Consistent error format
+    console.error('Validation error:', err);
+    return res.json({ error: 'invalid url' });
   }
 });
 
