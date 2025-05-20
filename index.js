@@ -37,6 +37,7 @@ const Url = mongoose.model('Url', urlSchema);
 
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
+  console.log('Received body:', req.body);
 
   // Basic URL format check
   if (!url || !/^https?:\/\/(www\.)?[a-z0-9-]+(\.[a-z]{2,}){1,3}(\/.*)?$/i.test(url)) {
