@@ -96,7 +96,8 @@ app.post('/api/shorturl', async (req, res) => {
     });
     
   } catch (err) {
-    return res.json({ error: 'invalid url' }); // Consistent error format
+    console.error('Error in POST /api/shorturl:', err.message);
+    return res.json({ error: 'invalid url' });
   }
 });
 
