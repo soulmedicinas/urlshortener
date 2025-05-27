@@ -63,7 +63,23 @@ app.post('/api/shorturl', async (req, res) => {
       });
     }
 
-  
+   // DNS verification (with timeout and better error handling)
+    const hostname = new URL(url).hostname;
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('DNS lookup timeout'));
+      }, 5000); // 5 second timeout
+      
+      dns.lookup(hostname, (err) => {
+        clearTimeout(timeout);
+        if (err) {
+          console.log('DNS lookup failed for:', hostname, err.message);
+          reject(new Error('invalid url'));
+        } else {
+          resolve();
+        }
+      });
+    });
 
      // Create new entry
      const shortUrl = shortid.generate();
