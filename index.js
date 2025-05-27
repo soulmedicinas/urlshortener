@@ -80,18 +80,19 @@ app.post('/api/shorturl', async (req, res) => {
         }
       });
     });
-
-     // Create new entry
-     const shortUrl = shortid.generate();
-     const newUrl = new Url({
-       original_url: url,
-       short_url: shortUrl
-     }); 
+    
+ // Create new entry with numeric short URL
+    const shortUrlNumber = await getNextShortUrl();
+    const newUrl = new Url({
+      original_url: url,
+      short_url: shortUrlNumber
+    });
 
     await newUrl.save();
+    
     res.json({
       original_url: url,
-      short_url: shortUrl
+      short_url: shortUrlNumber
     });
     
   } catch (err) {
