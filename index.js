@@ -54,15 +54,7 @@ app.post('/api/shorturl', async (req, res) => {
   }
 
   try {
-    // DNS verification
-    const hostname = new URL(url).hostname;
-    await new Promise((resolve, reject) => {
-      dns.lookup(hostname, (err) => {
-        if (err) reject(new Error('invalid url'));
-        else resolve();
-      });
-    });
-
+   // Check if URL already exists
     let existingUrl = await Url.findOne({ original_url: url });
     if (existingUrl) {
       return res.json({
@@ -70,6 +62,8 @@ app.post('/api/shorturl', async (req, res) => {
         short_url: existingUrl.short_url
       });
     }
+
+  
 
      // Create new entry
      const shortUrl = shortid.generate();
