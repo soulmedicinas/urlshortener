@@ -1,13 +1,11 @@
 // ES Module version
 import dotenv from 'dotenv';
 dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dns from 'node:dns';
 import validUrl from 'valid-url';
-import shortid from 'shortid';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,10 +32,11 @@ mongoose.connection.on('error', err => {
 // URL Schema
 const urlSchema = new mongoose.Schema({
   original_url: String,
-  short_url: Number
+  short_url: Number  // Changed to Number to match your example
 });
 
 const Url = mongoose.model('Url', urlSchema);
+
 const getNextShortUrl = async () => {
   const count = await Url.countDocuments();
   return count + 1;
@@ -47,48 +46,65 @@ const getNextShortUrl = async () => {
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
   console.log('Received body:', req.body);
-
-  // Validate URL
+  console.log('URL to validate:', url);
+  
+  // Validate URL format
+  console.log('Checking if URL is valid web URI...');
   if (!validUrl.isWebUri(url)) {
+    console.log('URL failed validUrl.isWebUri check');
     return res.json({ error: 'invalid url' });
   }
+  console.log('URL passed validUrl.isWebUri check');
 
   try {
-   // Check if URL already exists
+    // Check if URL already exists
+    console.log('Checking if URL already exists in database...');
     let existingUrl = await Url.findOne({ original_url: url });
     if (existingUrl) {
+      console.log('Found existing URL, returning it');
       return res.json({
         original_url: existingUrl.original_url,
         short_url: existingUrl.short_url
       });
     }
+    console.log('URL not found in database, proceeding with DNS check...');
 
-   // DNS verification (with timeout and better error handling)
+    // DNS verification (with timeout and better error handling)
     const hostname = new URL(url).hostname;
+    console.log('Extracted hostname:', hostname);
+    console.log('Starting DNS lookup...');
+    
     await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
+        console.log('DNS lookup timed out');
         reject(new Error('DNS lookup timeout'));
       }, 5000); // 5 second timeout
       
-      dns.lookup(hostname, (err) => {
+      dns.lookup(hostname, (err, address) => {
         clearTimeout(timeout);
         if (err) {
-          console.log('DNS lookup failed for:', hostname, err.message);
+          console.log('DNS lookup failed for:', hostname, 'Error:', err.message);
           reject(new Error('invalid url'));
         } else {
+          console.log('DNS lookup successful for:', hostname, 'Address:', address);
           resolve();
         }
       });
     });
     
- // Create new entry with numeric short URL
+    console.log('DNS check passed, creating new URL entry...');
+
+    // Create new entry with numeric short URL
     const shortUrlNumber = await getNextShortUrl();
+    console.log('Generated short URL number:', shortUrlNumber);
+    
     const newUrl = new Url({
       original_url: url,
       short_url: shortUrlNumber
     });
 
     await newUrl.save();
+    console.log('URL saved to database successfully');
     
     res.json({
       original_url: url,
@@ -123,7 +139,6 @@ app.get('/api/shorturl/:short_url', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 // basic routes
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
