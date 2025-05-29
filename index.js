@@ -139,7 +139,8 @@ app.get('/api/shorturl/:short_url', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-// basic routes
+
+// Basic routes
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
