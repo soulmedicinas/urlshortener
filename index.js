@@ -26,7 +26,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 const connectDB = async () => {
   try {
     // Use the direct connection string you provided
-    const mongoUri = 'mongodb+srv://analytic_nutrition2:analytic_nutrition2@freecodecamp-backenddev.w0sxe.mongodb.net/?retryWrites=true&w=majority&appName=freecodecamp-BackEndDev-APIs';
+    const mongoUri = 'mongodb+srv://analytic_nutrition2:<dbpassword>@freecodecamp-backenddev.w0sxe.mongodb.net/?retryWrites=true&w=majority&appName=freecodecamp-BackEndDev-APIs';
     
     console.log('Attempting to connect to MongoDB...');
     console.log('Starting MongoDB connection test...');
