@@ -14,19 +14,67 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/urlshortener')
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err.message));
+
+// MongoDB connection with better error handling
+const connectDB = async () => {
+  try {
+    // Use the direct connection string you provided
+    const mongoUri = 'mongodb+srv://analytic_nutrition2:analytic_nutrition2@freecodecamp-backenddev.w0sxe.mongodb.net/?retryWrites=true&w=majority&appName=freecodecamp-BackEndDev-APIs';
+    
+    console.log('Attempting to connect to MongoDB...');
+    console.log('Starting MongoDB connection test...');
+    
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 4000, // Timeout after 4s
+      bufferMaxEntries: 0, // Disable mongoose buffering
+      bufferCommands: false, // Disable mongoose buffering
+    });
+    
+    console.log('✅ MongoDB connected successfully');
+      
+    // Test a simple operation to make sure we can actually use the database
+    console.log('Testing database operations...');
+    const testResult = await mongoose.connection.db.admin().ping();
+    console.log('✅ Database ping successful:', testResult);
+    
+  }
+  catch (err) {
+    console.error('❌ MongoDB connection failed');
+    console.error('Error type:', err.name);
+    console.error('Error message:', err.message);
+    
+    // Check for specific error types
+    if (err.message.includes('authentication failed') || err.message.includes('bad auth')) {
+      console.error('🔑 AUTHENTICATION ERROR: Check your username and password in MONGO_URI');
+    } else if (err.message.includes('ENOTFOUND') || err.message.includes('getaddrinfo')) {
+      console.error('🌐 DNS ERROR: Check your cluster URL in MONGO_URI');
+    } else if (err.message.includes('connection')) {
+      console.error('🔌 CONNECTION ERROR: Check network access settings in MongoDB Atlas');
+    }
+    
+    console.error('Please check:');
+    console.error('1. Username and password are correct');
+    console.error('2. Cluster URL is correct');
+    console.error('3. Network access allows your IP address');
+    console.error('4. Database user has proper permissions');
+  }
+};
+
+connectDB();
 
 mongoose.connection.on('error', err => {
   console.error('MongoDB runtime error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected');
 });
 
 // URL Schema
@@ -47,6 +95,15 @@ app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
   console.log('Received body:', req.body);
   console.log('URL to validate:', url);
+  
+  // Check MongoDB connection status
+  console.log('MongoDB connection state:', mongoose.connection.readyState);
+  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+  
+  if (mongoose.connection.readyState !== 1) {
+    console.log('MongoDB not connected, returning error');
+    return res.json({ error: 'database connection issue' });
+  }
   
   // Validate URL format
   console.log('Checking if URL is valid web URI...');
