@@ -135,7 +135,7 @@ app.post('/api/shorturl', async (req, res) => {
       const timeout = setTimeout(() => {
         console.log('DNS lookup timed out');
         reject(new Error('DNS lookup timeout'));
-      }, 5000); // 5 second timeout
+      }, 4000); // 4 second timeout
       
       dns.lookup(hostname, (err, address) => {
         clearTimeout(timeout);
