@@ -24,7 +24,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 // Add this right after your imports for testing
 console.log('Testing connection string...');
 console.log('MONGO_URI from env:', process.env.MONGO_URI);
-console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://menali2:urlshort2025@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://menali2:<dbpassword>@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
   //.then(() => console.log('MongoDB connected successfully'))
  // .catch(err => {
    // console.error('MongoDB connection error:', err);
@@ -34,7 +34,7 @@ console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://
 const connectDB = async () => {
   try {
     console.log('Attempting to connect to MongoDB...');
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://menali2:urlshort2025@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://menali2:<dbpassword>@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
