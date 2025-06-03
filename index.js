@@ -21,17 +21,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://analytic_nutrition2:<db_password>@freecodecamp-backenddev.w0sxe.mongodb.net/urlShortener?retryWrites=true&w=majority&appName=freecodecamp-BackEndDev-APIs')
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch(err => console.error('MongoDB connection error:', err.message));
+// Add this right after your imports for testing
+console.log('Testing connection string...');
+console.log('MONGO_URI from env:', process.env.MONGO_URI);
+console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://menali2:urlshort2025@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+  //.then(() => console.log('MongoDB connected successfully'))
+ // .catch(err => {
+   // console.error('MongoDB connection error:', err);
+   // console.error('Error details:', err.message);
+  //});
 
-mongoose.connection.on('error', err => {
-  console.error('MongoDB runtime error:', err);
-});
+const connectDB = async () => {
+  try {
+    console.log('Attempting to connect to MongoDB...');
+    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://menali2:urlshort2025@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('Connection error details:', error);
+    process.exit(1);
+  }
+};
 
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
-});
+//connectDB();
+//mongoose.connection.on('error', err => {
+  //console.error('MongoDB runtime error:', err);
+//});
+
+//mongoose.connection.on('disconnected', () => {
+  //console.log('MongoDB disconnected');
+//});
 
 // URL Schema
 const urlSchema = new mongoose.Schema({
@@ -160,6 +181,10 @@ app.get('/', function(req, res) {
 
 app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
+});
+
+app.listen(port, '0.0.0.0', function() {
+  console.log(`Server running on port ${port}`);
 });
 
 app.listen(port, '0.0.0.0', function() {
