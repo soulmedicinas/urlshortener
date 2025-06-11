@@ -10,5 +10,5 @@ tasks:
       npm install
       sudo apt-get update
       sudo service mongodb start
-      echo "MONGO_URI=mongodb://localhost:27017/urlshortener" > .env
+      echo "MONGO_URI=mongodb+srv://<dbpassword>@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" > .env
   - command: node index.js
