@@ -45,14 +45,14 @@ const connectDB = async () => {
   }
 };
 
-//connectDB();
-//mongoose.connection.on('error', err => {
-  //console.error('MongoDB runtime error:', err);
-//});
+connectDB();
+mongoose.connection.on('error', err => {
+  console.error('MongoDB runtime error:', err);
+});
 
-//mongoose.connection.on('disconnected', () => {
-  //console.log('MongoDB disconnected');
-//});
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected');
+});
 
 // URL Schema
 const urlSchema = new mongoose.Schema({
