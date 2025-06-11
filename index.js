@@ -186,7 +186,3 @@ app.get('/api/hello', function(req, res) {
 app.listen(port, '0.0.0.0', function() {
   console.log(`Server running on port ${port}`);
 });
-
-app.listen(port, '0.0.0.0', function() {
-  console.log(`Server running on port ${port}`);
-});
