@@ -34,7 +34,7 @@ console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://
 const connectDB = async () => {
   try {
     console.log('Attempting to connect to MongoDB...');
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://menali2:<dbpassword>@cluster0.oglmmzf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/mydb', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -46,13 +46,14 @@ const connectDB = async () => {
 };
 
 connectDB();
-mongoose.connection.on('error', err => {
-  console.error('MongoDB runtime error:', err);
-});
 
-mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
-});
+(async () => {
+  await connectDB();
+
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+})();
 
 // URL Schema
 const urlSchema = new mongoose.Schema({
