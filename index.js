@@ -45,91 +45,65 @@ app.post("/api/shorturl", (req, res) => {
   let url = req.body.url;
 
 
-  //
+ // Search for '://', store protocol and hostname+path
+  const protocolRegExp = /^https?:\/\/(.*)/i;
 
-// POST endpoint to create short URL
-app.post('/api/shorturl', async (req, res) => {
-  const { url } = req.body;
-  console.log('Received body:', req.body);
-  console.log('URL to validate:', url);
-  
-  // Check MongoDB connection status
-  console.log('MongoDB connection state:', mongoose.connection.readyState);
-  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
-  
-  if (mongoose.connection.readyState !== 1) {
-    console.log('MongoDB not connected, returning error');
-    return res.json({ error: 'database connection issue' });
+  // Search for patterns like xxxx.xxxx.xxxx etc.
+  const hostnameRegExp = /^([a-z0-9\-_]+\.)+[a-z0-9\-_]+/i;
+
+  // "www.example.com/test/" and "www.example.com/test" are the same URL
+  if (url.match(/\/$/i))
+    url = url.slice(0, -1);
+
+  const protocolMatch = url.match(protocolRegExp);
+  if (!protocolMatch) {
+    return res.json({ "error": "Invalid URL" });
   }
-  
-  // Validate URL format
-  console.log('Checking if URL is valid web URI...');
-  if (!validUrl.isWebUri(url)) {
-    console.log('URL failed validUrl.isWebUri check');
-    return res.json({ error: 'invalid url' });
-  }
-  console.log('URL passed validUrl.isWebUri check');
 
-  try {
-    // Check if URL already exists
-    console.log('Checking if URL already exists in database...');
-    let existingUrl = await Url.findOne({ original_url: url });
-    if (existingUrl) {
-      console.log('Found existing URL, returning it');
-      return res.json({
-        original_url: existingUrl.original_url,
-        short_url: existingUrl.short_url
-      });
-    }
-    console.log('URL not found in database, proceeding with DNS check...');
+  // Remove the protocol temporarily  for DNS lookup
+  const hostAndQuery = protocolMatch[1];
 
-    // DNS verification (with timeout and better error handling)
-    const hostname = new URL(url).hostname;
-    console.log('Extracted hostname:', hostname);
-    console.log('Starting DNS lookup...');
-    
-    await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        console.log('DNS lookup timed out');
-        reject(new Error('DNS lookup timeout'));
-      }, 4000); // 4 second timeout
-      
-      dns.lookup(hostname, (err, address) => {
-        clearTimeout(timeout);
-        if (err) {
-          console.log('DNS lookup failed for:', hostname, 'Error:', err.message);
-          reject(new Error('invalid url'));
-        } else {
-          console.log('DNS lookup successful for:', hostname, 'Address:', address);
-          resolve();
-        }
-      });
+  // Here we have a URL w/out protocol
+  // DNS lookup: validate hostname
+  const hostnameMatch = hostAndQuery.match(hostnameRegExp);
+  if (hostnameMatch) {
+    // the URL has a valid www.whaterver.com[/something-optional] format
+    dns.lookup(hostnameMatch[0], (err) => {
+      if (err) {
+        // no DNS match, invalid Hostname, the URL won't be stored
+        res.json({ "error": "Invalid Hostname" });
+      } else {
+        // URL is OK, check if it's already stored
+        urlModel
+          .find().exec().then(data => {
+            new urlModel({
+              id: data.length + 1,
+              url: req.body.url
+            }).save().then(() => {
+              res.json({
+                original_url: req.body.url,
+                short_url: data.length + 1
+              });
+            }).catch(err => {
+              res.json(err);
+            });
+          });
+      }
     });
-    
-    console.log('DNS check passed, creating new URL entry...');
-
-    // Create new entry with numeric short URL
-    const shortUrlNumber = await getNextShortUrl();
-    console.log('Generated short URL number:', shortUrlNumber);
-    
-    const newUrl = new Url({
-      original_url: url,
-      short_url: shortUrlNumber
-    });
-
-    await newUrl.save();
-    console.log('URL saved to database successfully');
-    
-    res.json({
-      original_url: url,
-      short_url: shortUrlNumber
-    });
-    
-  } catch (err) {
-    console.error('Error in POST /api/shorturl:', err.message);
-    return res.json({ error: 'invalid url' });
-  }
+  } else {
+    // the URL has not a www.whatever.com format
+    res.json({ "error": "Invalid URL" });
+  };
 });
+
+//
+app.get("/api/shorturl/:id", (req, res) => {
+
+  if (!parseInt(req.params.id, 10)) {
+    // The short URL identifier is not a number
+    res.json({ "error": "Wrong format" });
+    return;
+  }
 
 // GET endpoint to redirect short URL
 app.get('/api/shorturl/:short_url', async (req, res) => {
