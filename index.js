@@ -31,16 +31,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/public', express.static(`${process.cwd()}/public`));
 
+app.get('/', function (req, res) {
+  res.sendFile(process.cwd() + '/views/index.html');
+});
 
-// Add this right after your imports for testing
-console.log('Testing connection string...');
-console.log('MONGO_URI from env:', process.env.MONGO_URI);
-console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://menali2:<dbpassword>@cluster0.oglmmzf.mongodb.net/');
-  //.then(() => console.log('MongoDB connected successfully'))
- // .catch(err => {
-   // console.error('MongoDB connection error:', err);
-   // console.error('Error details:', err.message);
-  //});
 
 
 (async () => {
@@ -52,13 +46,6 @@ console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://
 })();
 
 
-
-const Url = mongoose.model('Url', urlSchema);
-
-const getNextShortUrl = async () => {
-  const count = await Url.countDocuments();
-  return count + 1;
-};
 
 // POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
