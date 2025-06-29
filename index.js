@@ -44,7 +44,6 @@ app.get('/api/hello', function (req, res) {
 app.post("/api/shorturl", (req, res) => {
   let url = req.body.url;
 
-
  // Search for '://', store protocol and hostname+path
   const protocolRegExp = /^https?:\/\/(.*)/i;
 
@@ -96,7 +95,6 @@ app.post("/api/shorturl", (req, res) => {
   };
 });
 
-//
 app.get("/api/shorturl/:id", (req, res) => {
 
   if (!parseInt(req.params.id, 10)) {
@@ -105,38 +103,54 @@ app.get("/api/shorturl/:id", (req, res) => {
     return;
   }
 
-// GET endpoint to redirect short URL
-app.get('/api/shorturl/:short_url', async (req, res) => {
   try {
-    const shortUrlParam = parseInt(req.params.short_url);
-    
-    // Validate that short_url is a number
-    if (isNaN(shortUrlParam)) {
-      return res.status(404).json({ error: 'No URL found' });
-    }
-    
-    const url = await Url.findOne({ short_url: shortUrlParam });
-    
-    if (url) {
-      return res.redirect(url.original_url);
-    } else {
-      return res.status(404).json({ error: 'No URL found' });
-    }
-  } catch (err) {
-    console.error('Error in GET /api/shorturl:', err);
-    res.status(500).json({ error: 'Server error' });
+    urlModel.findOne({ "id": req.params.id }, (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      if (data) {
+        // redirect to the stored page
+        res.redirect(data.url);
+      } else {
+        res.json({ "error": "No short URL found for the given input" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      error: 'Invalid URL'
+    });
   }
 });
 
-// Basic routes
-app.get('/', function(req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
+app.get("/api/shorturl/:id", (req, res) => {
+
+  if (!parseInt(req.params.id, 10)) {
+    // The short URL identifier is not a number
+    res.json({ "error": "Wrong format" });
+    return;
+  }
+
+  try {
+    urlModel.findOne({ "id": req.params.id }, (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      if (data) {
+        // redirect to the stored page
+        res.redirect(data.url);
+      } else {
+        res.json({ "error": "No short URL found for the given input" });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      error: 'Invalid URL'
+    });
+  }
 });
 
-app.get('/api/hello', function(req, res) {
-  res.json({ greeting: 'hello API' });
-});
-
-app.listen(port, '0.0.0.0', function() {
-  console.log(`Server running on port ${port}`);
+app.listen(port, function () {
+  console.log(`Listening on port ${port}`);
 });
