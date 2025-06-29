@@ -28,10 +28,9 @@ const urlModel = mongoose.model('url', urlSchema)
 
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/public', express.static(`${process.cwd()}/public`));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Add this right after your imports for testing
 console.log('Testing connection string...');
