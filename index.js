@@ -18,7 +18,17 @@ db.once("open", function () {
   console.log("Connection successful!");
 });
 
+// URL Schema
+const urlSchema = new mongoose.Schema({
+  id: Number,
+  url: String
+});
+
+const urlModel = mongoose.model('url', urlSchema)
+
 app.use(cors());
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -42,11 +52,7 @@ console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://
   });
 })();
 
-// URL Schema
-const urlSchema = new mongoose.Schema({
-  original_url: String,
-  short_url: Number  // Changed to Number to match your example
-});
+
 
 const Url = mongoose.model('Url', urlSchema);
 
