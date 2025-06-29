@@ -12,6 +12,11 @@ const port = process.env.PORT || 3000;
 // Database
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once("open", function () {
+  console.log("Connection successful!");
+});
 
 app.use(cors());
 app.use(express.json());
@@ -28,21 +33,6 @@ console.log('Fallback URI being used:', process.env.MONGO_URI || 'mongodb+srv://
    // console.error('Error details:', err.message);
   //});
 
-const connectDB = async () => {
-  try {
-    console.log('Attempting to connect to MongoDB...');
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://menali2:<dbpassword>@cluster0.oglmmzf.mongodb.net/', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error('Connection error details:', error);
-    process.exit(1);
-  }
-};
-
-connectDB();
 
 (async () => {
   await connectDB();
