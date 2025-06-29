@@ -1,13 +1,13 @@
-// ES Module version
-import dotenv from 'dotenv';
-dotenv.config();
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import dns from 'node:dns';
-import validUrl from 'valid-url';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+require('dotenv').config({ path: '.env' });
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const dns = require('dns');
+const app = express();
+
+
+
 
 // Setup __dirname equivalent in ES Modules
 const __filename = fileURLToPath(import.meta.url);
