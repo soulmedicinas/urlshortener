@@ -40,8 +40,12 @@ app.get('/api/hello', function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+// URL shorter
+app.post("/api/shorturl", (req, res) => {
+  let url = req.body.url;
 
 
+  //
 
 // POST endpoint to create short URL
 app.post('/api/shorturl', async (req, res) => {
