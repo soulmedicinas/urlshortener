@@ -99,7 +99,7 @@ app.get("/api/shorturl/:id", (req, res) => {
 
   if (!parseInt(req.params.id, 10)) {
     // The short URL identifier is not a number
-    res.json({ "error": "Wrong format" });
+    res.json({ "error": "Incorrect format" });
     return;
   }
 
