@@ -1,13 +1,13 @@
-require('dotenv').config({ path: '.env' });
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const dns = require('dns');
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import dns from 'dns';
+import urlParser from 'url';
 const app = express();
 
 // Basic Configuration
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Database
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
