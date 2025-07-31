@@ -151,6 +151,7 @@ app.get("/api/shorturl/:id", (req, res) => {
   }
 });
 
-app.listen(port, function () {
-  console.log(`Listening on port ${port}`);
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });
